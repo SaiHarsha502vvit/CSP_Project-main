@@ -1,4 +1,8 @@
 import { GoCheckCircleFill, GoXCircleFill } from "react-icons/go";
+import dynamic from "next/dynamic";
+
+const DataTable = dynamic(() => import("./dataTable"), { ssr: false, loading: () => <div>Loading table...</div> });
+const MultiNutrientListing = dynamic(() => import("./MultiNutrientListing"), { ssr: false, loading: () => <div>Loading nutrients...</div> });
 
 export default function NutritionalListing(nut: any) {
   const nutrients = nut.nutrients;

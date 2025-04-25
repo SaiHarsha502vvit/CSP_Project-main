@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
+import validator from "validator";
 
 export async function POST(req: Request) {
   try {
@@ -13,9 +14,19 @@ export async function POST(req: Request) {
       );
     }
 
+    // Sanitize user input
+    const cleanEmail = validator.normalizeEmail(email + "") || "";
+    const cleanPassword = validator.escape(password + "");
+    if (!cleanEmail || !cleanPassword) {
+      return NextResponse.json(
+        { error: "Email and password are required" },
+        { status: 400 }
+      );
+    }
+
     // Check if user already exists
     const exists = await prisma.user.findUnique({
-      where: { email },
+      where: { email: cleanEmail },
     });
 
     if (exists) {
@@ -26,12 +37,12 @@ export async function POST(req: Request) {
     }
 
     // Hash the password
-    const hashedPassword = await hash(password, 10);
+    const hashedPassword = await hash(cleanPassword, 10);
 
     // Create a new user in the database
     const user = await prisma.user.create({
       data: { 
-        email, 
+        email: cleanEmail, 
         password: hashedPassword 
       },
     });

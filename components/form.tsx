@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { signIn } from "next-auth/react";
 import LoadingDots from "@/components/loading-dots";
 import toast from "react-hot-toast";
@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 
 export default function Form({ type }: { type: "login" | "register" }) {
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const liveRegionRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   return (
@@ -16,6 +18,7 @@ export default function Form({ type }: { type: "login" | "register" }) {
       onSubmit={(e) => {
         e.preventDefault();
         setLoading(true);
+        setErrorMsg("");
         if (type === "login") {
           signIn("credentials", {
             redirect: false,
@@ -25,6 +28,7 @@ export default function Form({ type }: { type: "login" | "register" }) {
           }).then(({ error }) => {
             if (error) {
               setLoading(false);
+              setErrorMsg(error);
               toast.error(error);
             } else {
               router.refresh();
@@ -50,6 +54,7 @@ export default function Form({ type }: { type: "login" | "register" }) {
               }, 2000);
             } else {
               const { error } = await res.json();
+              setErrorMsg(error);
               toast.error(error);
             }
           });
@@ -103,6 +108,15 @@ export default function Form({ type }: { type: "login" | "register" }) {
           <p>{type === "login" ? "Sign In" : "Sign Up"}</p>
         )}
       </button>
+      {/* ARIA live region for error/status messages */}
+      <div
+        ref={liveRegionRef}
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {errorMsg}
+      </div>
       {type === "login" ? (
         <p className="text-center text-sm text-gray-600">
           Don&apos;t have an account?{" "}

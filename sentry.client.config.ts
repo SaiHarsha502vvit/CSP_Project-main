@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { Replay } from "@sentry/replay"; // <-- Add this import
 
 Sentry.init({
   dsn: "https://440cc8f2688b2194211573824a665e0f@o4505121660665856.ingest.sentry.io/4505839858417664",
@@ -21,10 +22,10 @@ Sentry.init({
 
   // You can remove this option if you're not planning to use the Sentry Session Replay feature:
   integrations: [
-    new Sentry.Replay({
-      // Additional Replay configuration goes in here, for example:
+    new Replay({
       maskAllText: true,
       blockAllMedia: true,
     }),
+    // ...other integrations...
   ],
 });
