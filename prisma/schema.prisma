@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL")
+  // directUrl         = env("POSTGRES_URL_NON_POOLING")
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  firstName String?
+  surname   String?
+  foods     Food[]
+}
+
+model Food {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @default(now())
+  name          String
+  apiId         Int
+  userId        Int
+  vitaminA      Int
+  VitaminB1     Int
+  vitaminB2     Int
+  vitaminB3     Int
+  viatminB5     Int
+  vitaminB6     Int
+  viatminB12    Int
+  vitaminC      Int
+  vitaminD      Int
+  vitaminE      Int
+  vitaminK      Int
+  Calcium       Int
+  Carbohydrates Int
+  Cholestrol    Int
+  Choline       Int
+  Fiber         Int
+  FolicAcid     Int
+  Flouride      Int
+  Folate        Int
+  Fat           Int
+  SaturatedFat  Int
+  MonoUnsatFat  Int
+  PolyUnsatFat  Int
+  Iron          Int
+  Lycopene      Int
+  Maganese      Int
+  Magnesium     Int
+  Phosphorus    Int
+  Potassium     Int
+  Protein       Int
+  Selenium      Int
+  Sodium        Int
+  Sugar         Int
+  TransFat      Int
+  Zinc          Int
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Ingredient {
+  id           Int    @id @default(autoincrement())
+  ingredientId Int
+  name         String
+  dishId       Int
+  Dish         Dish   @relation(fields: [dishId], references: [id])
+}
+
+model Dish {
+  id          Int          @id @default(autoincrement())
+  userEmail   String?
+  name        String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  ingredients Ingredient[]
+}
